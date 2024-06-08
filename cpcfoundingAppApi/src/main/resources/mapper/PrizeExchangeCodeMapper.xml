@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.PrizeExchangeCodeMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.PrizeExchangeCode">
+        <id property="id" column="id"/>
+        <id property="prizeId" column="prize_id"/>
+        <id property="exchangeCode" column="exchange_code"/>
+        <id property="status" column="status"/>
+        <id property="addDate" column="add_date"/>
+        <id property="addUser" column="add_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted" column="deleted"/>
+
+    </resultMap>
+    <!--获取一个有效的兑换码-->
+    <select id="getActiveExchangeCode" resultMap="BaseResultMap">
+        select id,exchange_code from prize_exchange_code where prize_id=#{prizeId} and status=0 and deleted=0 ORDER BY RAND()  limit 1
+    </select>
+    <!--修改兑换码状态-->
+    <update id="updateExchangeCodeStatus">
+          update prize_exchange_code set status=1 where id=#{id} and status=0 and deleted=0
+    </update>
+
+</mapper>

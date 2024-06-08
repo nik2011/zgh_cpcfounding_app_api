@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.UserPrizeMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.UserPrize">
+        <id property="id" column="id"/>
+        <id property="orderNo" column="order_no"/>
+        <id property="prizeId" column="prize_id"/>
+        <id property="userId" column="user_id"/>
+        <id property="userName" column="user_name"/>
+        <id property="status" column="status"/>
+        <id property="addressProvince" column="address_province"/>
+        <id property="addressCity" column="address_city"/>
+        <id property="addressArea" column="address_area"/>
+        <id property="addressDetail" column="address_detail"/>
+        <id property="receiverUser" column="receiver_user"/>
+        <id property="receiverUserPhone" column="receiver_user_phone"/>
+        <id property="expressNumber" column="express_number"/>
+        <id property="getTime" column="get_time"/>
+        <id property="exchangeCode" column="exchange_code"/>
+        <id property="deliverTime" column="deliver_time"/>
+        <id property="bankCardNo" column="bank_card_no"/>
+        <id property="openCardBank" column="open_card_bank"/>
+        <id property="openCardBankBranch" column="open_card_bank_branch"/>
+        <id property="receiverUserIdCardNo" column="id_card_no"/>
+        <id property="addUser" column="add_user"/>
+        <id property="addDate" column="add_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted" column="deleted"/>
+    </resultMap>
+
+    <resultMap id="UserPrizeMap" type="com.yitu.cpcFounding.api.vo.userprize.UserPrizeVO">
+        <id property="userName" column="user_name"/>
+        <id property="wxHeadPic" column="wx_head_pic"/>
+        <id property="title" column="title"/>
+        <id property="activeType" column="active_type"/>
+    </resultMap>
+
+    <!-- 获取用户中奖记录列表 -->
+    <select id="userPrizeList" resultMap="UserPrizeMap">
+        SELECT lup.user_name,lu.wx_head_pic,lpb.title,lpb.active_type
+        FROM user_prize lup
+        INNER JOIN prize_book lpb ON lup.prize_id = lpb.id
+        INNER JOIN user lu ON lu.id = lup.user_id
+        <where>
+            lup.deleted = 0 and lu.deleted = 0 and lpb.prize_type not in (5,6)
+            <if test="activeType != null">
+                and lpb.active_type = #{activeType}
+            </if>
+        </where>
+        ORDER BY lup.id DESC LIMIT #{count}
+    </select>
+
+    <!-- 中奖列表分页查询 -->
+    <select id="userPrizePageList" resultMap="UserPrizeMap">
+        SELECT lup.user_name,lu.wx_head_pic,lpb.title,lpb.active_type
+        FROM user_prize lup
+        INNER JOIN prize_book lpb ON lup.prize_id = lpb.id
+        INNER JOIN user lu ON lu.id = lup.user_id
+        <where>
+            lup.deleted = 0 and lu.deleted = 0 and lpb.prize_type not in (5,6,9)
+            <if test="activeType != null">
+                and lpb.active_type = #{activeType}
+            </if>
+        </where>
+        ORDER BY lup.id DESC
+    </select>
+
+<!--   获取用户中奖数量-->
+   <select id="getUserPrizeCountByPrizeId" resultType="java.lang.Integer">
+       select count(1) from user_prize where prize_id=#{prizeId} and user_id=#{userId}  and deleted=0
+   </select>
+
+    <!--   获取用户今天中奖数量-->
+    <select id="getTodayUserPrizeCountByPrizeId" resultType="java.lang.Integer">
+       select count(1) from user_prize where user_id=#{userId}  and deleted=0
+       and datediff(add_date,now())=0
+   </select>
+
+    <!--   获取用户中奖记录-->
+    <select id="getUserPrizeCount" resultType="java.lang.Long">
+       select prize_id from user_prize where user_id=#{userId}  and deleted=0
+   </select>
+
+    <insert id="batchInsert">
+        INSERT INTO user_prize(order_no, prize_id, user_id, user_name, status, add_user, add_date, ip, deleted)
+        VALUES
+        <foreach collection="list" item="it" separator=",">
+            (#{it.orderNo}, #{it.prizeId}, #{it.userId}, #{it.userName}, #{it.status}, #{it.addUser}, #{it.addDate}, #{it.ip}, #{it.deleted})
+        </foreach>;
+    </insert>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.WeekScoreRankMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.WeekScoreRank">
+        <id property="id" column="id"/>
+        <id property="targetId" column="target_id"/>
+        <id property="type" column="type"/>
+        <id property="score" column="score"/>
+        <id property="rank" column="rank"/>
+        <id property="beginDate" column="begin_date"/>
+        <id property="endDate" column="end_date"/>
+        <id property="ip" column="ip"/>
+        <id property="addUser" column="add_user"/>
+        <id property="addDate" column="add_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="deleted" column="deleted"/>
+
+    </resultMap>
+</mapper>

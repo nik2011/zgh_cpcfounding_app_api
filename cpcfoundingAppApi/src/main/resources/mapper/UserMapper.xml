@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.User">
+        <id property="id" column="id"/>
+        <id property="wxOpenid" column="wx_openid"/>
+        <id property="wxUserName" column="wx_user_name"/>
+        <id property="wxHeadPic" column="wx_head_pic"/>
+        <id property="wxPhone" column="wx_phone"/>
+        <id property="phone" column="phone"/>
+        <id property="memberState" column="member_state"/>
+        <id property="addDate" column="add_date"/>
+        <id property="addUser" column="add_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted" column="deleted"/>
+        <id property="medalTotal" column="medal_total"/>
+        <id property="teamId" column="team_id"/>
+    </resultMap>
+
+    <!-- 修改用户登录信息-->
+    <update id="updateUserLogin">
+         update user set
+          wx_openid=#{wxOpenid}
+         ,wx_user_name=#{wxUserName}
+         ,wx_head_pic=#{wxHeadPic}
+         ,login_time=#{loginTime}
+         ,add_date=#{addDate}
+         where id=#{id}
+    </update>
+
+    <!-- 修改用户微信手机号-->
+    <update id="updateUserWxPhone">
+         update user set
+          wx_phone=#{wxPhone}
+         where wx_openid=#{wxOpenid} and deleted=0
+    </update>
+
+    <!-- 用户摇一摇次数减一-->
+    <update id="minusYaoCount">
+        update user set yao_count=yao_count-1 where id=#{userId} and yao_count>0
+    </update>
+
+    <!-- 用户摇一摇次数加一-->
+    <update id="addYaoCount">
+        update user set yao_count=yao_count+1 where id=#{userId}
+    </update>
+
+    <select id="getUserByPhone" resultMap="BaseResultMap">
+        select * from user where deleted = 0 and phone =#{phone}
+    </select>
+
+    <update id="updateUserById">
+         update user set phone=#{phone},wx_phone=#{phone},member_state=#{memberState} where id=#{userId}
+    </update>
+    <update id="updateAuditFailNum">
+        update user set audit_fail_num=audit_fail_num+1 where id=#{userId}
+    </update>
+    <update id="updateUserLocation">
+        update user set area=#{area},lng=#{lng},lat=#{lat} where id=#{userId}
+    </update>
+
+    <!--获取用户奖章分页数据-->
+    <select id="userPageList" resultType="com.yitu.cpcFounding.api.domain.User">
+        select  t.id, t.wx_user_name, t.medal_total, t.wx_head_pic,
+        (select add_date from user_medal where user_id = t.id ORDER BY id desc limit 0,1) as medal_date from user t
+        where t.member_state = 1 and t.deleted = 0
+        <if test="wxUserName != null and wxUserName != ''">
+            and t.wx_user_name like "%"#{wxUserName}"%"
+        </if>
+        order by t.medal_total DESC, medal_date ASC
+    </select>
+
+    <!--获取用户奖章分页列表-->
+    <select id="userMedalCount" resultType="int">
+        select sum(medal_total) as count from user
+         where deleted = 0
+         and medal_total>0
+    </select>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出-->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<Configuration status="DEBUG" monitorInterval="30">
+    <!--全局属性-->
+    <Properties>
+        <Property name="APP_NAME">cpcFoundingApiSystem</Property>
+<!--        <Property name="LOG_FILE_PATH">D:/logs/${APP_NAME}</Property>-->
+        <Property name="LOG_FILE_PATH">/yitu/zghmaydayappapi/zghmaydayappapi/files/logs/${APP_NAME}</Property>
+        <!--设置日志输出格式-->
+        <Property name="PID">????</Property>
+        <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+        <Property name="LOG_LEVEL_PATTERN">%5p</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{${LOG_LEVEL_PATTERN}} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
+        </Property>
+        <Property name="FILE_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN} --- [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
+        </Property>
+    </Properties>
+    <!--配置输出源-->
+    <Appenders>
+        <!--输出到控制台-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN}"/>
+        </Console>
+        <!--输出info日志到文件，filePattern旧日志另存文件名-->
+        <RollingFile name="RollingInfoFile" fileName="${LOG_FILE_PATH}/info.log"
+                     filePattern="${LOG_FILE_PATH}/$${date:yyyy-MM-dd}/info-%d{yyyy-MM-dd}-%i.log.gz">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches 10 MegaBytes -->
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <Async name="AsyncAppender" bufferSize="1048576">
+            <AppenderRef ref="RollingInfoFile"/>
+            <AppenderRef ref="Console"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
+        <Logger name="org.springframework" level="ERROR" additivity="false">
+            <AppenderRef ref="AsyncAppender"/>
+        </Logger>
+        <Logger name="org.mybatis" level="ERROR" additivity="false">
+            <AppenderRef ref="AsyncAppender"/>
+        </Logger>
+        <!--        <logger  additivity="false" name="com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor" level="DEBUG">-->
+        <!--            <AppenderRef ref="Console"/>-->
+        <!--            <AppenderRef ref="RollingInfoFile"/>-->
+        <!--        </logger>-->
+        <!-- LOG everything at INFO level -->
+        <Root level="ERROR">
+            <AppenderRef ref="AsyncAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

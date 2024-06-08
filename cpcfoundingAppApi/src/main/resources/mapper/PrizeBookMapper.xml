@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.PrizeBookMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.PrizeBook">
+        <id property="id" column="id"/>
+        <id property="activeType" column="active_type"/>
+        <id property="title" column="title"/>
+        <id property="prizeType" column="prize_type"/>
+        <id property="total" column="total"/>
+        <id property="stock" column="stock"/>
+        <id property="chanceBeginNum" column="chance_begin_num"/>
+        <id property="chanceEndNum" column="chance_end_num"/>
+        <id property="imageUrl" column="image_url"/>
+        <id property="memberType" column="member_type"/>
+        <id property="expirationDate" column="expiration_date"/>
+        <id property="remark" column="remark"/>
+        <id property="addDate" column="add_date"/>
+        <id property="addUser" column="add_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted" column="deleted"/>
+        <id property="prizeValue" column="prize_value"/>
+        <id property="chanceBeginNum" column="chance_begin_num"/>
+        <id property="chanceEndNum" column="chance_end_num"/>
+    </resultMap>
+
+    <resultMap id="PrizeByProbabilityMap" type="com.yitu.cpcFounding.api.vo.redis.YaoPrizeBookVo">
+        <id property="id" column="id"/>
+        <id property="activeType" column="active_type"/>
+        <id property="title" column="title"/>
+        <id property="prizeType" column="prize_type"/>
+        <id property="imageUrl" column="image_url"/>
+        <id property="memberType" column="member_type"/>
+        <id property="prizeValue" column="prize_value"/>
+        <id property="stock" column="stock"/>
+    </resultMap>
+    <!--    根据概率获取奖品-->
+    <select id="getPrizeByProbability" resultMap="PrizeByProbabilityMap">
+        select id,title,prize_type,image_url,member_type,prize_value,stock
+        from prize_book
+        where #{probabiliyValue} &gt;= chance_begin_num and #{probabiliyValue} &lt;=chance_end_num
+        and deleted=0  and active_type=1 and is_shelves=1
+    </select>
+    <!--    奖品库存减一-->
+    <update id="minusPrizeStock">
+        update prize_book set stock=stock-1 where id=#{id} and deleted=0 and stock>0 and active_type=1
+    </update>
+
+    <!--获取摇一摇奖品列表-->
+    <select id="getYaoPrizeList" resultMap="PrizeByProbabilityMap">
+        select id,title,prize_type,image_url,member_type,prize_value,stock,chance_begin_num,chance_end_num
+        from prize_book
+        where  deleted=0 and active_type=1 and is_shelves=1 and chance_begin_num>0 and stock>0
+    </select>
+
+    <!-- 减奖品库存一-->
+    <update id="minusPrizeStockCount">
+        update prize_book set stock=stock-#{count} where id=#{id} and deleted=0 and stock>=#{count}
+    </update>
+
+    <!--获取奖品未中奖概率奖品-->
+    <select id="getNoWinningProbabilityPrize" resultMap="BaseResultMap">
+        select id,chance_begin_num,chance_end_num
+        from prize_book
+        where  deleted=0 and active_type=1 and is_shelves=1 and prize_type=6 limit 1
+    </select>
+
+</mapper>

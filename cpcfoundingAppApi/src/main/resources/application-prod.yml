@@ -1,0 +1,123 @@
+server:
+  #端口
+  port: 80
+
+spring:
+  #数据库配置
+  datasource:
+    #MySql 192.9.102.129:3367 womens fMEQR68Rdh
+    url: jdbc:mysql://10.10.0.251:3306/zgh_CPCFounding?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&allowMultiQueries=true
+    username: cpcfdayapi
+    password: qIWJo&tm2E
+  rabbitmq:
+    host: 10.10.0.55
+    port: 56722
+    username: rabbitprod
+    password: pl02GCXkMt
+    virtual-host: /
+    connection-timeout: 15000
+    #最大通道数
+    requested-channel-max: 20000
+    #是否启用消息确认模式
+    publisher-confirms: false
+  #    listener:
+  #      simple:
+  #        acknowledge-mode: manual
+  #        concurrency: 5
+  #        max-concurrency: 10
+  #        prefetch: 1
+  redis:
+    #redis 单机环境配置
+    #    host: 192.9.102.59
+    #    port: 30010
+    #    password: 3HTzgboy5A2rLio2
+    #    database: 8
+    #    ssl: false
+    #    timeout: 2000
+    #redis 集群环境配置
+    cluster:
+      nodes: 10.10.0.127:6379,10.10.0.244:6379,10.10.0.171:6379,10.10.0.18:6380,10.10.0.68:6380,10.10.0.158:6380
+    # 连接超时时间（毫秒）
+    timeout: 5000
+    password: ^K8#r3KudtV
+    jedis:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 100
+        # 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
+        max-wait: 5000
+        # 连接池中的最大空闲连接
+        max-idle: 50
+        # 连接池中的最小空闲连接
+        min-idle: 1
+    lettuce:
+      pool:
+        max-active: 100 #连接池最大连接数（使用负值表示没有限制）
+        max-idle: 50   #连接池中的最大空闲连接
+        min-idle: 1    # 连接池中的最小空闲连接
+        max-wait: 5000 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+
+
+knife4j:
+  enable: false
+
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+
+eureka:
+  client:
+    #打开eureka
+    enabled: false
+
+file:
+  ## 服务器地址
+  windowUrl: D:/files/
+  linuxUrl: /usr/local/tomcat/zghmaydayadminapi/files/
+  image:
+    host: https://lsapp.szzgh.org:4432/
+    webHost: https://lsapp.szzgh.org:4432/
+#file: /usr/local/tomcat/files/projectname/
+
+sms:
+  url: http://219.133.105.209:9082/sdk/SMS
+  username: zghzgfw
+  password: cafb341cbfe43cd1773d164ed60d0678  #md5 32位加密
+
+#微信小程序配置
+wechat:
+  appId: wx889c54df4c6a074f
+  appSecret: ae840532cd7a3204f95ec5b41e2195da
+  #登录凭证校验
+  authCode2SessionUrl: https://api.weixin.qq.com/sns/jscode2session
+  #默认头像
+  defaultUserHeadImg: static/images/avatar/default/user.png
+  #商户号
+  mchid: 1596921091
+  #获取小程序码code url
+  codeUrl: https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=
+  #获取accessToken#
+  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token?
+
+# 工会认证
+tradeUnion:
+  # 秘钥
+  key: ewbadswt
+  # 服务单位编号
+  identity: csscis
+  role: criterion
+  username: zgfw
+  password: zgfe324sfwwe
+  endpoint: http://app.szzgh.org/services/memberValidateService?wsdl
+  targetNamespace: http://impl.criterion.bus.common.css.com
+  method: isMember
+
+#后台请求配置
+rest:
+  appid: open29qw871khz875fh6
+  appsecret: b18zs9jw7e6ljr82d92el0ms290s782s0
+  url: http://10.10.0.103:8002/rest
+
+#兑换码加密密码
+exchangeCode:
+  secret: Br6aTmY7DCrnuOCpvbiS1tsmVPo3NFho

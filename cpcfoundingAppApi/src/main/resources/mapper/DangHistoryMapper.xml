@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.DangHistoryMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.DangHistory">
+        <id property="id" column="id"/>
+        <id property="lableId" column="lable_id"/>
+        <id property="type" column="type"/>
+        <id property="coverType" column="cover_type"/>
+        <id property="title" column="title"/>
+        <id property="url" column="url"/>
+        <id property="content" column="content"/>
+        <id property="sort" column="sort"/>
+        <id property="visitNum" column="visit_num"/>
+        <id property="ip" column="ip"/>
+        <id property="addUser" column="add_user"/>
+        <id property="addDate" column="add_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="deleted" column="deleted"/>
+
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.UserScoreMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.UserScore">
+        <id property="id" column="id"/>
+        <id property="teamId" column="team_id"/>
+        <id property="userId" column="user_id"/>
+        <id property="wxUserName" column="wx_user_name"/>
+        <id property="phone" column="phone"/>
+        <id property="sourceType" column="source_type"/>
+        <id property="score" column="score"/>
+        <id property="targetId" column="target_id"/>
+        <id property="ip" column="ip"/>
+        <id property="addUser" column="add_user"/>
+        <id property="addDate" column="add_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="selectUserScoreDetails" resultType="com.yitu.cpcFounding.api.vo.UserScoreDetailsVO">
+        select id, add_date, score, source_type
+        from user_score
+        where user_id = #{userId}
+          and deleted = 0
+          and add_date like concat('%', #{date}, '%')
+    </select>
+
+    <select id="findAddDateByUserId" resultType="date">
+        select distinct DATE (add_date)
+        from user_score
+        where user_id=#{userId} and deleted=0
+        order by add_date
+    </select>
+
+    <select id="selectUserScoreRanking" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select id, wxUserName, wxHeadPic, scoreTotal, userSort
+        from (select u.id                      id,
+                     u.wx_user_name            wxUserName,
+                     u.wx_head_pic             wxHeadPic,
+                     ifnull(u.score_total, 0)  scoreTotal,
+                     (@ranknum:=@ranknum+1) as userSort
+              from `user` u
+                       left join (
+                  SELECT user_id, max(id) id from user_score where deleted = 0 group by user_id
+              ) s on s.user_id = u.id,
+                   (select @ranknum:=#{index}) c
+              where u.deleted = 0
+                and u.member_state = 1
+              order by scoreTotal desc, s.id asc) a
+            limit #{index}
+           , #{size}
+    </select>
+
+    <select id="selectUserScoreWeekRanking" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select id, wxUserName, wxHeadPic, scoreTotal, userSort
+        from (select u.id                          id,
+                     u.wx_user_name                wxUserName,
+                     u.wx_head_pic                 wxHeadPic,
+                     ifnull(u.week_score_total, 0) scoreTotal,
+                     (@ranknum:=@ranknum+1) as     userSort
+              from `user` u
+                       left join (
+                  SELECT user_id, max(id) id from user_score where deleted = 0 group by user_id
+              ) s on s.user_id = u.id,
+                   (select @ranknum:=#{index}) c
+              where u.deleted = 0
+                and u.member_state = 1
+              order by scoreTotal desc, s.id asc) a
+            limit #{index}
+           , #{size}
+    </select>
+
+    <select id="selectAnswerScoreRanking" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select id, wxUserName, wxHeadPic, scoreTotal, userSort
+        from (select u.id                            id,
+                     u.wx_user_name                  wxUserName,
+                     u.wx_head_pic                   wxHeadPic,
+                     ifnull(u.answer_score_total, 0) scoreTotal,
+                     (@ranknum:=@ranknum+1) as       userSort
+              from `user` u
+                       left join (
+                  SELECT user_id, max(id) id from user_score where source_type = 3 and deleted = 0 group by user_id
+              ) s on s.user_id = u.id,
+                   (select @ranknum:=#{index}) c
+              where u.deleted = 0
+                and u.member_state = 1
+              order by scoreTotal desc, s.id asc) a
+            limit #{index}
+           , #{size}
+    </select>
+
+    <select id="selectScoreTotalOfDay" resultType="com.yitu.cpcFounding.api.vo.userScore.UserScoreTotalVO">
+        select id, wxHeadPic, ifnull(scoreTotal, 0) as scoreTotal
+        from (select u.id                   id,
+                     u.wx_head_pic          wxHeadPic,
+                     (select sum(us.score)
+                      from user_score us
+                      where u.id = us.user_id
+                        and us.deleted = 0) scoreTotal
+              from `user` u
+              where u.deleted = 0
+                and u.id = #{id}) a
+    </select>
+
+    <select id="selectSumOfDayByScoreTypeAndUserId" resultType="int">
+        select ifnull(sum(score), 0) as score
+        from user_score
+        where source_type = #{sourceType}
+          and deleted = 0
+          and user_id = #{id}
+          and to_days(add_date) = to_days(now())
+    </select>
+
+    <select id="selectSumOfDayByAddDate" resultType="int">
+        select ifnull(sum(score), 0) as score
+        from user_score
+        where deleted = 0
+          and add_date like concat('%', #{realDate}, '%')
+          and user_id = #{userId}
+    </select>
+
+    <select id="checkUserShareAnswer" resultType="int">
+        select count(1)
+        from user_score
+        Where DATE_FORMAT(add_date, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+          and source_type = 5
+          and target_id = #{beInviteUserId}
+          and user_id = #{inviteUserId}
+          and deleted = 0
+    </select>
+
+    <select id="selectTimesOfDayByTypeAndUserId" resultType="int">
+        select count(*)
+        from user_score
+        where user_id = #{id}
+          and deleted = 0
+          and source_type = #{sourceType}
+          and DATE_FORMAT(add_date, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+    </select>
+
+    <select id="selectUserScoreRankings" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select id                        id,
+               wx_user_name              wxUserName,
+               wx_head_pic               wxHeadPic,
+               ifnull(score_total, 0) as scoreTotal
+        from `user`
+        where deleted = 0
+          and member_state = 1
+        order by scoreTotal desc, id asc
+    </select>
+
+    <select id="selectUserScoreWeekRankings" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select u.id                          id,
+               u.wx_user_name                wxUserName,
+               u.wx_head_pic                 wxHeadPic,
+               ifnull(u.week_score_total, 0) scoreTotal
+        from `user` u
+                 left join (
+            SELECT user_id, max(id) id from user_score where deleted = 0 group by user_id
+        ) s on s.user_id = u.id
+        where u.deleted = 0
+          and u.member_state = 1
+        order by scoreTotal desc, s.id asc
+    </select>
+
+    <select id="selectAnswerScoreRankings" resultType="com.yitu.cpcFounding.api.vo.userScore.UserRankingListVO">
+        select u.id                            id,
+               u.wx_user_name                  wxUserName,
+               u.wx_head_pic                   wxHeadPic,
+               ifnull(u.answer_score_total, 0) scoreTotal
+        from `user` u
+                 left join (
+            SELECT user_id, max(id) id from user_score where source_type = 3 and deleted = 0 group by user_id
+        ) s on s.user_id = u.id
+        where u.deleted = 0
+          and u.member_state = 1
+        order by scoreTotal desc, s.id asc
+    </select>
+</mapper>

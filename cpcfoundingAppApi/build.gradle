@@ -1,0 +1,183 @@
+buildscript {
+    repositories {
+        maven { url "http://192.9.102.59:30002/repository/maven-public/" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7.1"
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'war'
+apply plugin: "org.sonarqube"
+
+group = 'com.yitu'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+[compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+repositories {
+//    mavenLocal()
+//    maven { url 'http://192.9.102.59:30002/repository/maven-public/' }
+//    maven { url 'http://192.9.102.59:30002/repository/maven-releases/' }
+//    maven { url 'http://nexus.gitee.ltd/repository/maven-releases/' }
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    mavenCentral()
+}
+
+ext {
+    springCloudVersion = 'Finchley.RELEASE'
+    springBootVersion = '2.3.1.RELEASE'
+    junitVersion = '4.12'
+    fastjsonVersion = '1.2.47'
+    druidVersion = '1.1.10'
+    shiroVersion = '1.7.1'
+    shiroRedisVersion = '3.1.0'
+    okhttpVersion = '3.11.0'
+    mybatisPlusVersion = '3.1.0'
+    swaggerVersion = '2.7.0'
+    knife4jVersion = '2.0.2'
+    thumbnailatorVersion = '0.4.8'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+    }
+}
+
+dependencies {
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
+//    compile project(":common")
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //tomcat
+    providedRuntime'org.springframework.boot:spring-boot-starter-tomcat'
+    //去除内嵌tomcat后，需要添加servlet依赖
+    //compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    //log4j2
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    //json
+    implementation "com.alibaba:fastjson:$fastjsonVersion"
+    implementation "com.google.code.gson:gson"
+
+    //lombok
+    implementation "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    //数据库
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation "com.alibaba:druid:$druidVersion"
+    implementation "com.baomidou:mybatis-plus-boot-starter:$mybatisPlusVersion"
+    //工具
+    implementation "org.apache.commons:commons-lang3"
+//    implementation "joda-time:joda-time"
+    //权限
+    implementation "org.apache.shiro:shiro-spring:$shiroVersion"
+    implementation "org.crazycake:shiro-redis:$shiroRedisVersion"
+    //请求
+    implementation "org.apache.httpcomponents:httpclient"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    //模板
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    //swagger
+
+    implementation "com.github.xiaoymin:knife4j-spring-boot-starter:3.1.12"
+    implementation "org.apache.cxf:cxf-rt-transports-http:3.1.12"
+    implementation 'org.apache.cxf:cxf-rt-frontend-jaxws:3.1.10'
+
+//    implementation "org.apache.cxf:cxf-rt-frontend-jaxws:3.1.12"
+//    implementation 'org.apache.cxf:cxf-rt-transports-http-jetty:3.1.12'
+//    implementation 'wsdl4j:wsdl4j:1.6.3'
+
+//    implementation "com.github.xiaoymin:knife4j-spring-boot-starter:$knife4jVersion"
+
+    implementation "com.github.xiaoymin:knife4j-spring-boot-starter:$knife4jVersion"
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+    }
+    testCompile "junit:junit"
+
+    compile 'commons-io:commons-io:2.4'
+
+//    // https://mvnrepository.com/artifact/org.lucee/xmpcore
+     compile group: 'org.lucee', name: 'xmpcore', version: '5.1.2'
+     //hultool
+    compile group: 'cn.hutool', name: 'hutool-all', version: '4.5.13'
+//    // https://mvnrepository.com/artifact/com.yumimobi.ads/mediation
+   // compile group: 'com.yumimobi.ads', name: 'mediation', version: '1.0.0'
+
+    //ios图片上传旋转问题
+
+    //implementation 'com.drew:metadata:2.3.1'
+    //implementation 'com.drew:metadatav2:2.3.1@jar'
+   // implementation 'com.drew.metadata:extractor:2.3.1@jar'
+
+    compile "net.coobird:thumbnailator:$thumbnailatorVersion"
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.6.RELEASE'
+    //ercode
+    compile 'com.google.zxing:core:3.4.1'
+    //短信
+    compile group: 'org.apache.axis', name: 'axis', version: '1.4'
+    compile group: 'org.apache.axis', name: 'axis-jaxrpc', version: '1.4'
+    compile group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
+    compile group: 'commons-discovery', name: 'commons-discovery', version: '0.2'
+    // https://mvnrepository.com/artifact/javax.xml.soap/javax.xml.soap-api
+    compile group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-amqp
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-amqp', version: '2.1.7.RELEASE'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+// https://mvnrepository.com/artifact/org.apache.axis/axis
+    implementation group: 'org.apache.axis', name: 'axis', version: '1.4'
+
+
+
+}
+
+configurations {
+    all {
+        //排除SpringBoot内置的logging
+        all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        //排除org.springframework.cloud:spring-cloud-starter-netflix-eureka-client内置的xstream
+        all*.exclude group: 'com.thoughtworks.xstream', module: 'xstream'
+        //排除SpringBoot内置的tomcat
+        //all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+sonarqube{
+    properties{
+        property "sonar.projectName", "总工会-五一活动"
+        property "sonar.projectKey", "cpcFoundingAppApi-SpringBoot"
+        property "sonar.host.url", "http://192.9.102.59:30005" //test:http://localhost:9000
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.login", "d2566ce2a0104dd0ff30ac96246d456f238c314d" //test:740e1280d07c58e3a50f8d085d229dc55d654f5b
+        property "sonar.sources", "."
+        property "sonar.inclusions", "src/main/java/**,src/main/java/resources/mapper/**"
+        property "sonar.exclusions", "src/main/webapp/**,src/main/java/com/yitu/women/utils/AESUtils.java" +
+                ",src/main/java/com/yitu/women/utils/MD5Util.java," +
+                "src/main/java/com/yitu/women/exception/GlobalException.java," +
+                "src/main/java/com/yitu/women/service/impl/FileServiceImpl.java," +
+                "src/main/java/com/yitu/women/config/ShiroConfig.java"
+    }
+}

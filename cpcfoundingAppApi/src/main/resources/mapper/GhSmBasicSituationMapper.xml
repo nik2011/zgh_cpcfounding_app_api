@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.GhSmBasicSituationMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.GhSmBasicSituation">
+        <id property="id" column="id"/>
+        <id property="idNum" column="id_num"/>
+        <id property="contactPhone" column="contact_phone"/>
+        <id property="memberCard" column="member_card"/>
+        <id property="membershipStatus" column="membership_status"/>
+        <id property="addDate" column="add_date"/>
+
+    </resultMap>
+</mapper>

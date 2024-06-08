@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.QuestionLibraryItemMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.QuestionLibraryItem">
+        <id property="id" column="id"/>
+        <id property="questionId" column="question_id"/>
+        <id property="name" column="name"/>
+        <id property="number" column="number"/>
+        <id property="addDate" column="add_date"/>
+        <id property="addUser" column="add_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted" column="deleted"/>
+
+    </resultMap>
+</mapper>

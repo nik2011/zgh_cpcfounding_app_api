@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yitu.cpcFounding.api.mapper.ShareMsgMapper">
+    <resultMap id="BaseResultMap" type="com.yitu.cpcFounding.api.domain.Msg">
+        <id property="id" column="id"/>
+        <id property="userId" column="user_id"/>
+        <id property="mobilePhone" column="mobile_phone"/>
+        <id property="title" column="title"/>
+        <id property="content" column="content"/>
+        <id property="remark" column="remark"/>
+        <id property="sendTime" column="send_time"/>
+        <id property="addUser" column="add_user"/>
+        <id property="addDate" column="add_date"/>
+        <id property="modifyUser" column="modify_user"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="ip" column="ip"/>
+        <id property="deleted2" column="deleted2"/>
+
+    </resultMap>
+</mapper>
